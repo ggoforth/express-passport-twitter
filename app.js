@@ -41,13 +41,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res, next) => {
+  res.json(req.session.profile); 
+});
+
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', passport.authenticate('twitter', {
   failureRedirect: '/',
   session: false
 }), (req, res, next) => {
-  //they authorized
-  res.json(req.user);
+  req.session.profile = req.user;
+  res.redirect('/');
 });
 
 // catch 404 and forward to error handler
